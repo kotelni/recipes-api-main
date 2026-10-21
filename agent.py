@@ -97,6 +97,12 @@ def post_review_comment(pr_number: int, comment: str) -> str:
     confirmation message with the URL of the created review.
     """
     pr = repo.get_pull(pr_number)
+    # GitHub allows only one pending review per user per PR. A stale pending
+    # review left by an earlier run would make create_review fail with 422,
+    # so drop any pending review owned by the current account first.
+    for existing in pr.get_reviews():
+        if existing.state == "PENDING":
+            existing.delete()
     review = pr.create_review(body=comment, event="COMMENT")
     return f"Review posted on PR #{pr_number}: {review.html_url}"
 
