@@ -97,7 +97,7 @@ def post_review_comment(pr_number: int, comment: str) -> str:
     confirmation message with the URL of the created review.
     """
     pr = repo.get_pull(pr_number)
-    review = pr.create_review(body=comment)
+    review = pr.create_review(body=comment, event="COMMENT")
     return f"Review posted on PR #{pr_number}: {review.html_url}"
 
 
